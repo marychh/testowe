@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body style="padding-top:15px">
+    <!--Przycisk dodawania-->
+    <div class="col-md-10 col-md-offset-1">
+        <div class="well well-sm">
+            <button href="#" id="btnAdd" class="btn btn-success" onclick="AddEmployeesRecord(0)">Dodaj osobę do bazy klientek</button>
+        </div>
+    </div>
+
+    <div class="col-md-10 col-md-offset-1">
+        <!--Przycisk szukania po last name-->
+        <div class="well well-sm">
+            <input type="button" id="btnSearch" class="btn btn-success" value="Wyświetl całą bazę" />
+        </div>
+        <!--Tabela generowana z lastname-->
+        <div class="well hidden" id="divData">
+            <table class="table table-bordered" id="tblData">
+                <thead>
+                    <tr>
+                        <th class="hidden" >ID</th>
+                        <th>Nazwisko</th>
+                        <th>Adres</th>
+                        <th>Nr tel.</th>
+                        <th>Nr tel. męża</th>
+                        <th>Email</th>
+                        <th>Urodziny</th>
+                        <th>Produkty</th>
+                        <th>Ostatniego zakupu</th>
+                        <th>Usuń</th>
+                        <th>Edytuj</th>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+        </div>
+        <div id="divError" class="alert alert-danger collapse">
+            <a id="linkClose" href="#" class="close">&times;</a>
+            <div id="divErrorText"></div>
+        </div>
+        <!--Error-->
+        <div id="diverror" class="alert alert-danger collapse">
+            <a id="linkclose" href="#" class="close">&times;</a>
+            <div id="diverrortext"></div>
+        </div>
+    </div>
+    <!--Popup Modal do Add or Edit osoby z bazy telefonów-->
+    <div class="modal fade" id="MyModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a class="close" data-dismiss="modal">&times;</a>
+                    <h4 id="ModalTitle"></h4>
+                </div>
+                <div class="modal-body">
+                    <form id="Form">
+                        <fieldset id="SubmitForm">
+                            <input type="text" class="hidden"  id="cust" />
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="txtName" value="Imię i Nazwisko" />
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="txtAddress" value="Adres" />
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="txtphone" value="Nr telefonu"/>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="txthusbentphone" value="Nr telefonu męża" />
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="txtemail" value="Email" />
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="txtdataofbirth" value="Data urodzenia"/>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="txtprodukt" value="Produkty"/>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="txtbuydate" value="Data ostatniego zakupu"/>
+                            </div>
+                            <div class="form-group">
+                                <button href="#" id="btnSaveEmployees" class="btn btn-block btn-danger">Zapisz do bazy</button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Utworzenie PopUp Modal dla DeleteConfirmation-->
+    <div class="modal fade" id="DeleteConfirmation" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a class="close" data-dismiss="modal">&times;</a>
+                    <h4>Usuń klientki z bazy</h4>
+                </div>
+                <div class="modal-body">
+                    <h4>Czy na pewno chcesz usunąć klientkę z bazy?</h4>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-primary" data-dismiss="modal">Zrezygnuj</a>
+                    <a class="btn btn-danger" id="btnConfirmDelete" onclick="ConfirmDelete()">Wykonaj</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="Scripts/jquery-3.3.1.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#btnSearch').click(function () {
+                $.ajax({
+                    url: '/api/Customers',
+                    method: 'GET',
+                    success: function (data) {
+                        $('#divData').removeClass('hidden');
+                        $('#tblBody').empty();
+                        $.each(data, function (index, value) {
+                            var row = $('<tr class="row_"><td class="hidden">' + '<span id="emplid">' + value.id_Customers + '</span>' + '</td><td>'
+                                + value.Name + '</td><td>'
+                                + value.Address + '</td><td>'
+                                + value.phone + '</td><td>'
+                                + value.husbentphone + '</td><td>'
+                                + value.email + '</td><td>'
+                                + value.dateofbirth + '</td><td>'
+                                + value.product + '</td><td>'
+                                + value.buydate + '</td><td>'
+                                + '<button  class = "btn btn-danger" onclick="DeleteEmployeesRecord(' + value.id_Customers + ')" ><span class="glyphicon glyphicon-trash"></span></button>' + '</td><td>'
+                                + '<button class = "btn btn-warning" onclick="EditEmployeesRecord(' + value.id_Customers + ')"><span class="glyphicon glyphicon-edit"></span></button>' + '</td></tr>');
+                            $('#tblData').append(row);
+                        });
+                    },
+                    error: function (jqXHR) {
+                        $('#divErrorText').text(jqXHR.responseText);
+                        $('#divError').show('fade');
+                    }
+
+                });
+            });
+        });
+        // uruchomienie okna popup dodawania do bazy
+        function AddEmployeesRecord(id_Customers) {
+                    $('#Form')[0].reset();
+                    $('#ModalTitle').html("Dodawanie klientki do bazy");
+                    $('#MyModal').modal();
+                }
+        // uruchomienie okna popup edytowania rekordu w bazie
+        function EditEmployeesRecord(id_Customers) {
+            $('#emplid').val(id_Customers);
+            $('#ModalTitle').html("Edytowanie danych klientek w bazie");
+            $('#MyModal').modal();
+           // var cust_id = $('#emplid').val();
+            $.ajax({
+                url:'api/SelectforId',
+                method: 'GET',
+                data: {
+                    id_customers: $('#emplid').val(),
+                },
+                success: function (data) {
+                  //  var obj = JSON.parse(data);
+                    $('#cust').val(data.id_Customers);
+                    $('#txtName').val(data.Name);
+                    $('#txtAddress').val(data.Address);
+                    $('#txtphone').val(data.phone);
+                    $('#txthusbentphone').val(data.husbentphone);
+                    $('#txtemail').val(data.email);
+                    $('#txtdataofbirth').val(data.dateofbirth);
+                    $('#txtprodukt').val(data.product);
+                    $('#txtbuydate').val(data.buydate);
+                }
+            });
+        }
+
+        $('#btnSaveEmployees').click(function (id_Customers) {
+        //$('#btnSaveEmployees').click(function () {
+            $('#cust').val(id_Customers);
+            //var data = $("#SubmitForm").serialize();
+            //var empl_id = $('#emplid').val();
+            var empl_id = $('#cust').val();
+            $.ajax({
+                //url: 'api/UpdateCustomers',
+                url: 'api/UpdateCustomers?id_customers=' + empl_id,
+                method: 'POST',
+                //data: data,
+                data: {
+                    id_customers: $('#cust').val(),
+                },
+                success: function (data) {
+
+                    Name: $('#txtName').val();
+                    Address: $('#txtaddress').val();
+                    phone: $('#txtphone').val();
+                    husbentphone: $('#txthusbentphone').val();
+                    email: $('#txtemail').val();
+                    dateofbirth: $('#txtdataofbirth').val();
+                    product: $('#txtprodukt').val();
+                    buydate: $('#txtbuydate').val();
+                    alert('Uaktualniono dane');
+                    $('#MyModal').modal('hide');
+                },
+            });
+        });
+        //uruchomienie okna popup dla kasowania użytkownika z bazy
+        function DeleteEmployeesRecord(id_Customers) {
+            $('#emplid').val(id_Customers);
+            $('#DeleteConfirmation').modal('show');
+        }
+        function ConfirmDelete() {
+            var empl_id = $('#emplid').val();
+            $.ajax({
+                url: 'api/Delete?id_customers=' + empl_id,
+                method: 'POST',
+                data: {
+                    id_customers: $('#emplid').val(),
+                },
+                success: function () {
+                    alert('Rekord zostanie usunięty');
+                    $('#DeleteConfirmation').modal('hide');
+                    //  window.location.href = "Usuwanie.html";
+                    $('#.row_' + empl_id).remove();
+                },
+                error: function () {
+                    console.log('coś poszło nie tak')
+                }
+
+            });
+        };
+    </script>
+</body>
+</html>

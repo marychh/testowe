@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="MaryKayCustomersModelStoreContainer" CdmEntityContainer="MaryKayCustomersEntities">
+    <EntitySetMapping Name="Customers">
+      <EntityTypeMapping TypeName="MaryKayCustomersModel.Customers">
+        <MappingFragment StoreEntitySet="Customers">
+          <ScalarProperty Name="id_Customers" ColumnName="id_Customers" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Address" ColumnName="Address" />
+          <ScalarProperty Name="phone" ColumnName="phone" />
+          <ScalarProperty Name="husbentphone" ColumnName="husbentphone" />
+          <ScalarProperty Name="email" ColumnName="email" />
+          <ScalarProperty Name="dateofbirth" ColumnName="dateofbirth" />
+          <ScalarProperty Name="product" ColumnName="product" />
+          <ScalarProperty Name="buydate" ColumnName="buydate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="SelectforId" FunctionName="MaryKayCustomersModel.Store.SelectforId">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="MaryKayCustomersModel.SelectforId_Result">
+          <ScalarProperty Name="id_Customers" ColumnName="id_Customers" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Address" ColumnName="Address" />
+          <ScalarProperty Name="phone" ColumnName="phone" />
+          <ScalarProperty Name="husbentphone" ColumnName="husbentphone" />
+          <ScalarProperty Name="email" ColumnName="email" />
+          <ScalarProperty Name="dateofbirth" ColumnName="dateofbirth" />
+          <ScalarProperty Name="product" ColumnName="product" />
+          <ScalarProperty Name="buydate" ColumnName="buydate" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="DeleteforId" FunctionName="MaryKayCustomersModel.Store.DeleteforId" />
+    <FunctionImportMapping FunctionImportName="UpdateCustomers" FunctionName="MaryKayCustomersModel.Store.UpdateCustomers" />
+  </EntityContainerMapping>
+</Mapping>
